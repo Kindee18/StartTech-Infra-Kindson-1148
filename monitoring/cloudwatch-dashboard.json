@@ -1,0 +1,93 @@
+{
+	"widgets": [
+		{
+			"type": "metric",
+			"properties": {
+				"metrics": [
+					[
+						"AWS/ApplicationELB",
+						"TargetResponseTime",
+						{ "stat": "Average", "label": "Response Time" }
+					],
+					[".", "RequestCount", { "stat": "Sum", "label": "Total Requests" }],
+					[
+						".",
+						"HTTPCode_Target_2XX_Count",
+						{ "stat": "Sum", "label": "HTTP 2XX" }
+					],
+					[
+						".",
+						"HTTPCode_Target_4XX_Count",
+						{ "stat": "Sum", "label": "HTTP 4XX" }
+					],
+					[
+						".",
+						"HTTPCode_Target_5XX_Count",
+						{ "stat": "Sum", "label": "HTTP 5XX" }
+					]
+				],
+				"period": 60,
+				"stat": "Average",
+				"region": "us-east-1",
+				"title": "Load Balancer Performance"
+			}
+		},
+		{
+			"type": "metric",
+			"properties": {
+				"metrics": [
+					["AWS/EC2", "CPUUtilization", { "stat": "Average" }],
+					[".", "NetworkIn", { "stat": "Sum" }],
+					[".", "NetworkOut", { "stat": "Sum" }],
+					["AWS/ApplicationELB", "TargetCount", { "stat": "Average" }],
+					[".", "HealthyHostCount", { "stat": "Average" }],
+					[".", "UnHealthyHostCount", { "stat": "Average" }]
+				],
+				"period": 300,
+				"stat": "Average",
+				"region": "us-east-1",
+				"title": "Instance and Target Health"
+			}
+		},
+		{
+			"type": "metric",
+			"properties": {
+				"metrics": [
+					["AWS/ElastiCache", "CPUUtilization", { "stat": "Average" }],
+					[".", "DatabaseMemoryUsagePercentage", { "stat": "Average" }],
+					[".", "NetworkBytesIn", { "stat": "Sum" }],
+					[".", "NetworkBytesOut", { "stat": "Sum" }],
+					[".", "Evictions", { "stat": "Sum" }],
+					[".", "CacheHits", { "stat": "Sum" }],
+					[".", "CacheMisses", { "stat": "Sum" }]
+				],
+				"period": 300,
+				"stat": "Average",
+				"region": "us-east-1",
+				"title": "Redis Cache Performance"
+			}
+		},
+		{
+			"type": "log",
+			"properties": {
+				"query": "fields @timestamp, @message\n| filter @message like /ERROR/\n| stats count() as error_count by bin(5m)",
+				"region": "us-east-1",
+				"title": "Application Error Rate (5min bins)"
+			}
+		},
+		{
+			"type": "metric",
+			"properties": {
+				"metrics": [
+					["AWS/Lambda", "Duration", { "stat": "Average" }],
+					[".", "Errors", { "stat": "Sum" }],
+					[".", "Throttles", { "stat": "Sum" }]
+				],
+				"period": 300,
+				"stat": "Average",
+				"region": "us-east-1",
+				"title": "Application Latency and Errors"
+			}
+		}
+	]
+}

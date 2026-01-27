@@ -1,0 +1,98 @@
+[
+	{
+		"AlarmName": "backend-cpu-high",
+		"MetricName": "CPUUtilization",
+		"Namespace": "AWS/EC2",
+		"Statistic": "Average",
+		"Period": 300,
+		"EvaluationPeriods": 2,
+		"Threshold": 70,
+		"ComparisonOperator": "GreaterThanThreshold",
+		"AlarmActions": ["arn:aws:sns:us-east-1:ACCOUNT_ID:starttech-alarms"],
+		"AlarmDescription": "Trigger scale-up when EC2 CPU is high"
+	},
+	{
+		"AlarmName": "backend-cpu-low",
+		"MetricName": "CPUUtilization",
+		"Namespace": "AWS/EC2",
+		"Statistic": "Average",
+		"Period": 300,
+		"EvaluationPeriods": 2,
+		"Threshold": 30,
+		"ComparisonOperator": "LessThanThreshold",
+		"AlarmActions": ["arn:aws:sns:us-east-1:ACCOUNT_ID:starttech-alarms"],
+		"AlarmDescription": "Trigger scale-down when EC2 CPU is low"
+	},
+	{
+		"AlarmName": "alb-unhealthy-hosts",
+		"MetricName": "UnHealthyHostCount",
+		"Namespace": "AWS/ApplicationELB",
+		"Statistic": "Average",
+		"Period": 60,
+		"EvaluationPeriods": 2,
+		"Threshold": 0,
+		"ComparisonOperator": "GreaterThanThreshold",
+		"AlarmActions": ["arn:aws:sns:us-east-1:ACCOUNT_ID:starttech-alarms"],
+		"AlarmDescription": "Alert when ALB has unhealthy targets"
+	},
+	{
+		"AlarmName": "alb-5xx-errors",
+		"MetricName": "HTTPCode_Target_5XX_Count",
+		"Namespace": "AWS/ApplicationELB",
+		"Statistic": "Sum",
+		"Period": 300,
+		"EvaluationPeriods": 2,
+		"Threshold": 10,
+		"ComparisonOperator": "GreaterThanThreshold",
+		"AlarmActions": ["arn:aws:sns:us-east-1:ACCOUNT_ID:starttech-alarms"],
+		"AlarmDescription": "Alert when ALB sees high 5XX error rates"
+	},
+	{
+		"AlarmName": "alb-response-time-high",
+		"MetricName": "TargetResponseTime",
+		"Namespace": "AWS/ApplicationELB",
+		"Statistic": "Average",
+		"Period": 300,
+		"EvaluationPeriods": 2,
+		"Threshold": 1,
+		"ComparisonOperator": "GreaterThanThreshold",
+		"AlarmActions": ["arn:aws:sns:us-east-1:ACCOUNT_ID:starttech-alarms"],
+		"AlarmDescription": "Alert when response time is high (>1 second)"
+	},
+	{
+		"AlarmName": "redis-cpu-high",
+		"MetricName": "CPUUtilization",
+		"Namespace": "AWS/ElastiCache",
+		"Statistic": "Average",
+		"Period": 300,
+		"EvaluationPeriods": 2,
+		"Threshold": 75,
+		"ComparisonOperator": "GreaterThanThreshold",
+		"AlarmActions": ["arn:aws:sns:us-east-1:ACCOUNT_ID:starttech-alarms"],
+		"AlarmDescription": "Alert when Redis CPU is high"
+	},
+	{
+		"AlarmName": "redis-memory-high",
+		"MetricName": "DatabaseMemoryUsagePercentage",
+		"Namespace": "AWS/ElastiCache",
+		"Statistic": "Average",
+		"Period": 300,
+		"EvaluationPeriods": 2,
+		"Threshold": 90,
+		"ComparisonOperator": "GreaterThanThreshold",
+		"AlarmActions": ["arn:aws:sns:us-east-1:ACCOUNT_ID:starttech-alarms"],
+		"AlarmDescription": "Alert when Redis memory usage is high"
+	},
+	{
+		"AlarmName": "redis-evictions",
+		"MetricName": "Evictions",
+		"Namespace": "AWS/ElastiCache",
+		"Statistic": "Sum",
+		"Period": 300,
+		"EvaluationPeriods": 2,
+		"Threshold": 1000,
+		"ComparisonOperator": "GreaterThanThreshold",
+		"AlarmActions": ["arn:aws:sns:us-east-1:ACCOUNT_ID:starttech-alarms"],
+		"AlarmDescription": "Alert when Redis is evicting keys"
+	}
+]

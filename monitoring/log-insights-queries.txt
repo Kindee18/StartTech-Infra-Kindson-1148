@@ -1,0 +1,158 @@
+# CloudWatch Logs Insights Queries
+
+## Backend Application Logs
+
+### 1. Error Analysis
+```
+fields @timestamp, @message, @duration, @billedDuration
+| filter @message like /ERROR/
+| stats count() as error_count, avg(@duration) as avg_duration by @message
+| sort error_count desc
+```
+
+### 2. Performance Analysis
+```
+fields @timestamp, @duration, @billedDuration
+| filter ispresent(@duration)
+| stats count(), avg(@duration), max(@duration), pct(@duration, 95) as p95
+```
+
+### 3. Status Code Distribution
+```
+fields @timestamp, @message
+| filter @message like /HTTP\/1\.[01].*[0-9]{3}/
+| regex @message /HTTP\/1\.[01].*(?<status>[0-9]{3})/
+| stats count() by status
+```
+
+### 4. API Endpoint Performance
+```
+fields @timestamp, @message, @duration
+| filter @message like /POST|GET|PUT|DELETE/
+| regex @message /(?<method>GET|POST|PUT|DELETE)\s+(?<path>\/[^\s]*)/
+| stats count(), avg(@duration), max(@duration) as max_latency by path, method
+```
+
+### 5. Database Errors
+```
+fields @timestamp, @message
+| filter @message like /mongodb|database|connection/i
+| stats count() as db_errors by @message
+```
+
+### 6. Authentication Issues
+```
+fields @timestamp, @message
+| filter @message like /auth|login|unauthorized|forbidden/i
+| stats count() by @message
+```
+
+## Load Balancer Logs
+
+### 7. 4XX Errors
+```
+fields @timestamp, request_path, status, target_status_code
+| filter target_status_code like /4[0-9]{2}/
+| stats count() by request_path, target_status_code
+```
+
+### 8. 5XX Errors
+```
+fields @timestamp, request_path, status, target_status_code
+| filter target_status_code like /5[0-9]{2}/
+| stats count() by request_path, target_status_code
+```
+
+### 9. Response Time Analysis
+```
+fields @timestamp, target_processing_time, request_processing_time
+| stats count(), avg(target_processing_time), max(target_processing_time) as p_max, pct(target_processing_time, 95) as p95
+```
+
+### 10. Traffic Volume
+```
+fields @timestamp
+| stats count() as request_count by bin(5m)
+```
+
+## Redis Cache Logs
+
+### 11. Cache Hit Rate
+```
+fields @timestamp, @message
+| filter @message like /cache|redis/i
+| regex @message /(?<cache_status>hit|miss)/i
+| stats count() by cache_status
+```
+
+### 12. Memory Usage Trends
+```
+fields @timestamp, @message
+| filter @message like /memory|usage/i
+| stats avg(), max() by bin(5m)
+```
+
+## Infrastructure Metrics
+
+### 13. Instance Health
+```
+fields @timestamp, @message
+| filter @message like /instance|health|running/i
+| stats count() as status_changes by @message, bin(1m)
+```
+
+### 14. Deployment Events
+```
+fields @timestamp, @message
+| filter @message like /deploy|update|restart/i
+| stats count() by @message, bin(1h)
+```
+
+### 15. Log Volume by Level
+```
+fields @message
+| regex @message /(?<level>ERROR|WARN|INFO|DEBUG)/
+| stats count() by level
+```
+
+## Advanced Queries
+
+### 16. Error Rate Over Time
+```
+fields @timestamp, @message
+| filter @message like /ERROR/
+| stats count() as error_count by bin(5m)
+| stats avg(error_count) as avg_errors
+```
+
+### 17. Slow Query Detection
+```
+fields @timestamp, @duration
+| filter ispresent(@duration) and @duration > 1000
+| sort @duration desc
+| limit 100
+```
+
+### 18. Distinct Users/IPs
+```
+fields @message, client_ip
+| filter ispresent(client_ip)
+| stats count() as request_count by client_ip
+| sort request_count desc
+```
+
+### 19. Failed Requests by Endpoint
+```
+fields @timestamp, request_path, target_status_code
+| filter target_status_code like /[45][0-9]{2}/
+| stats count() as failures by request_path
+| sort failures desc
+```
+
+### 20. Cross-Service Error Correlation
+```
+fields @timestamp, @message, service
+| filter @message like /ERROR|FAIL/
+| stats count() by service, bin(1m)
+| sort @timestamp desc
+```
