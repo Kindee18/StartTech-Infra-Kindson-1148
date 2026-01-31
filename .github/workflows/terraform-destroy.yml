@@ -69,6 +69,7 @@ jobs:
           TF_VAR_mongodb_username: ${{ secrets.MONGODB_USERNAME }}
           TF_VAR_mongodb_org_id: ${{ secrets.MONGODB_ORG_ID }}
           TF_VAR_environment: ${{ github.event.inputs.environment }}
+          TF_VAR_jwt_secret_key: ${{ secrets.JWT_SECRET_KEY }}
         run: terraform plan -destroy -out=tfplan
 
       - name: Terraform Destroy

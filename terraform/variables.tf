@@ -86,6 +86,13 @@ variable "docker_image" {
   type        = string
 }
 
+variable "jwt_secret_key" {
+  description = "JWT secret key for backend"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
 # Database Variables
 variable "use_mongodb_atlas" {
   description = "Use MongoDB Atlas (true) or self-hosted MongoDB (false)"

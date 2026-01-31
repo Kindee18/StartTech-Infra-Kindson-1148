@@ -106,6 +106,12 @@ variable "mongodb_connection_string" {
   sensitive   = true
 }
 
+variable "jwt_secret_key" {
+  description = "JWT secret key for backend"
+  type        = string
+  sensitive   = true
+}
+
 variable "common_tags" {
   description = "Common tags to apply to all resources"
   type        = map(string)

@@ -83,6 +83,7 @@ module "compute" {
   ecr_repository_arn         = aws_ecr_repository.backend.arn
   redis_endpoint             = "redis://${module.caching.redis_endpoint}:${module.caching.redis_port}"
   mongodb_connection_string  = module.database.mongodb_connection_string
+  jwt_secret_key             = var.jwt_secret_key
   enable_deletion_protection = var.enable_alb_deletion_protection
   common_tags                = local.common_tags
 }
