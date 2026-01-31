@@ -97,7 +97,7 @@ variable "jwt_secret_key" {
 variable "use_mongodb_atlas" {
   description = "Use MongoDB Atlas (true) or self-hosted MongoDB (false)"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "mongodb_org_id" {
