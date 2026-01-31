@@ -89,7 +89,7 @@ jobs:
         run: terraform show -json tfplan > tfplan.json
 
       - name: Upload Plan Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tfplan
           path: terraform/tfplan*
@@ -165,7 +165,7 @@ jobs:
         run: terraform output -json > outputs.json
 
       - name: Upload Outputs Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tf-outputs
           path: terraform/outputs.json
