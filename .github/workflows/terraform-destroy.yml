@@ -1,84 +1,97 @@
 name: Destroy Infrastructure
 
 on:
-    workflow_dispatch:
-        inputs:
-            environment:
-                description: "Environment to destroy (dev, staging, prod)"
-                required: true
-                type: choice
-                options:
-                    - dev
-                    - staging
-                    - prod
-            confirm:
-                description: "Type YES to confirm destruction"
-                required: true
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to destroy (dev, staging, prod)"
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+      confirm:
+        description: "Type YES to confirm destruction"
+        required: true
 
 permissions:
-    id-token: write
-    contents: read
+  id-token: write
+  contents: read
 
 env:
-    AWS_REGION: us-east-1
-    TF_VERSION: 1.6.0
+  AWS_REGION: us-east-1
+  TF_VERSION: 1.6.0
 
 jobs:
-    destroy:
-        name: Destroy Infrastructure
-        runs-on: ubuntu-latest
+  destroy:
+    name: Destroy Infrastructure
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Verify Confirmation
-              run: |
-                  if [ "${{ github.event.inputs.confirm }}" != "YES" ]; then
-                    echo "❌ Destruction cancelled. Confirmation not received."
-                    exit 1
-                  fi
+    steps:
+      - name: Verify Confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "YES" ]; then
+            echo "❌ Destruction cancelled. Confirmation not received."
+            exit 1
+          fi
 
-            - name: Checkout code
-              uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v4
-              with:
-                  role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.TERRAFORM_ROLE_NAME }}
-                  aws-region: ${{ env.AWS_REGION }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.TERRAFORM_ROLE_NAME }}
+          aws-region: ${{ env.AWS_REGION }}
 
-            - name: Setup Terraform
-              uses: hashicorp/setup-terraform@v2
-              with:
-                  terraform_version: ${{ env.TF_VERSION }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
 
-            - name: Terraform Init
-              working-directory: terraform
-              run: |
-                  terraform init \
-                    -backend-config="bucket=${{ secrets.TERRAFORM_STATE_BUCKET }}" \
-                    -backend-config="key=starttech/terraform.tfstate" \
-                    -backend-config="region=${{ env.AWS_REGION }}" \
-                    -backend-config="encrypt=true" \
-                    -backend-config="dynamodb_table=${{ secrets.TERRAFORM_LOCKS_TABLE }}" \
-                    -input=false
+      - name: Terraform Init
+        working-directory: terraform
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ secrets.TERRAFORM_STATE_BUCKET }}" \
+            -backend-config="key=starttech/terraform.tfstate" \
+            -backend-config="region=${{ env.AWS_REGION }}" \
+            -backend-config="encrypt=true" \
+            -backend-config="dynamodb_table=${{ secrets.TERRAFORM_LOCKS_TABLE }}" \
+            -input=false
 
-            - name: Terraform Destroy Plan
-              working-directory: terraform
-              env:
-                  TF_VAR_docker_image: ${{ secrets.ECR_REPOSITORY_URL }}:latest
-                  TF_VAR_mongodb_password: ${{ secrets.MONGODB_PASSWORD }}
-                  TF_VAR_mongodb_username: ${{ secrets.MONGODB_USERNAME }}
-                  TF_VAR_mongodb_org_id: ${{ secrets.MONGODB_ORG_ID }}
-                  TF_VAR_environment: ${{ github.event.inputs.environment }}
-              run: terraform plan -destroy -out=tfplan
+      - name: Terraform Destroy Plan
+        working-directory: terraform
+        env:
+          TF_VAR_docker_image: ${{ secrets.ECR_REPOSITORY_URL }}:latest
+          TF_VAR_mongodb_password: ${{ secrets.MONGODB_PASSWORD }}
+          TF_VAR_mongodb_username: ${{ secrets.MONGODB_USERNAME }}
+          TF_VAR_mongodb_org_id: ${{ secrets.MONGODB_ORG_ID }}
+          TF_VAR_environment: ${{ github.event.inputs.environment }}
+        run: terraform plan -destroy -out=tfplan
 
-            - name: Terraform Destroy
-              working-directory: terraform
-              run: terraform apply -auto-approve tfplan
+      - name: Terraform Destroy
+        working-directory: terraform
+        run: terraform apply -auto-approve tfplan
 
-            - name: Send Destruction Notification
-              uses: 8398a7/action-slack@v3
-              with:
-                  status: success
-                  text: "Infrastructure destroyed for ${{ github.event.inputs.environment }} environment"
-                  webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-                  fields: repo,message,author
+      - name: Send Destruction Notification
+        if: success()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "✅ Infrastructure destroyed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Infrastructure Destruction Successful*\nEnvironment: ${{ github.event.inputs.environment }}\nRepository: ${{ github.repository }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
