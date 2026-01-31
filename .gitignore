@@ -5,3 +5,12 @@ terraform.tfvars
 terraform/terraform-outputs.json
 terraform/.terraform.lock.hcl
 terraform/.terraform.tfstate.lock.info
+# IDE
+.vscode/
+.venv/
+.env
+*.swp
+*.swo
+
+# OS
+.DS_Store
