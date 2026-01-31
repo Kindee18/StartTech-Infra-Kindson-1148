@@ -8,8 +8,8 @@
 		"EvaluationPeriods": 2,
 		"Threshold": 70,
 		"ComparisonOperator": "GreaterThanThreshold",
-		"AlarmActions": ["arn:aws:sns:us-east-1:ACCOUNT_ID:starttech-alarms"],
-		"AlarmDescription": "Trigger scale-up when EC2 CPU is high"
+		"AlarmDescription": "Trigger scale-up when EC2 CPU is high (>70% for 10 minutes)",
+		"TreatMissingData": "notBreaching"
 	},
 	{
 		"AlarmName": "backend-cpu-low",
@@ -20,8 +20,8 @@
 		"EvaluationPeriods": 2,
 		"Threshold": 30,
 		"ComparisonOperator": "LessThanThreshold",
-		"AlarmActions": ["arn:aws:sns:us-east-1:ACCOUNT_ID:starttech-alarms"],
-		"AlarmDescription": "Trigger scale-down when EC2 CPU is low"
+		"AlarmDescription": "Trigger scale-down when EC2 CPU is low (<30% for 10 minutes)",
+		"TreatMissingData": "notBreaching"
 	},
 	{
 		"AlarmName": "alb-unhealthy-hosts",
@@ -32,8 +32,8 @@
 		"EvaluationPeriods": 2,
 		"Threshold": 0,
 		"ComparisonOperator": "GreaterThanThreshold",
-		"AlarmActions": ["arn:aws:sns:us-east-1:ACCOUNT_ID:starttech-alarms"],
-		"AlarmDescription": "Alert when ALB has unhealthy targets"
+		"AlarmDescription": "Alert when ALB has unhealthy targets",
+		"TreatMissingData": "notBreaching"
 	},
 	{
 		"AlarmName": "alb-5xx-errors",
@@ -44,10 +44,82 @@
 		"EvaluationPeriods": 2,
 		"Threshold": 10,
 		"ComparisonOperator": "GreaterThanThreshold",
-		"AlarmActions": ["arn:aws:sns:us-east-1:ACCOUNT_ID:starttech-alarms"],
-		"AlarmDescription": "Alert when ALB sees high 5XX error rates"
+		"AlarmDescription": "Alert when ALB sees high 5XX error rates (>10 errors in 5 minutes)",
+		"TreatMissingData": "notBreaching"
 	},
 	{
+		"AlarmName": "alb-4xx-errors-high",
+		"MetricName": "HTTPCode_Target_4XX_Count",
+		"Namespace": "AWS/ApplicationELB",
+		"Statistic": "Sum",
+		"Period": 300,
+		"EvaluationPeriods": 2,
+		"Threshold": 50,
+		"ComparisonOperator": "GreaterThanThreshold",
+		"AlarmDescription": "Alert on high client error rate (>50 errors in 5 minutes)",
+		"TreatMissingData": "notBreaching"
+	},
+	{
+		"AlarmName": "redis-memory-high",
+		"MetricName": "DatabaseMemoryUsagePercentage",
+		"Namespace": "AWS/ElastiCache",
+		"Statistic": "Average",
+		"Period": 300,
+		"EvaluationPeriods": 2,
+		"Threshold": 85,
+		"ComparisonOperator": "GreaterThanThreshold",
+		"AlarmDescription": "Alert when Redis memory usage is high (>85%)",
+		"TreatMissingData": "notBreaching"
+	},
+	{
+		"AlarmName": "redis-cpu-high",
+		"MetricName": "CPUUtilization",
+		"Namespace": "AWS/ElastiCache",
+		"Statistic": "Average",
+		"Period": 300,
+		"EvaluationPeriods": 2,
+		"Threshold": 75,
+		"ComparisonOperator": "GreaterThanThreshold",
+		"AlarmDescription": "Alert when Redis CPU is high (>75%)",
+		"TreatMissingData": "notBreaching"
+	},
+	{
+		"AlarmName": "alb-response-time-high",
+		"MetricName": "TargetResponseTime",
+		"Namespace": "AWS/ApplicationELB",
+		"Statistic": "Average",
+		"Period": 300,
+		"EvaluationPeriods": 2,
+		"Threshold": 1.0,
+		"ComparisonOperator": "GreaterThanThreshold",
+		"AlarmDescription": "Alert when response time is slow (>1 second average)",
+		"TreatMissingData": "notBreaching"
+	},
+	{
+		"AlarmName": "application-error-rate",
+		"MetricName": "Errors",
+		"Namespace": "AWS/Lambda",
+		"Statistic": "Sum",
+		"Period": 300,
+		"EvaluationPeriods": 1,
+		"Threshold": 5,
+		"ComparisonOperator": "GreaterThanThreshold",
+		"AlarmDescription": "Alert on application errors (>5 errors in 5 minutes)",
+		"TreatMissingData": "notBreaching"
+	},
+	{
+		"AlarmName": "asg-healthy-instances-low",
+		"MetricName": "GroupHealthyInstances",
+		"Namespace": "AWS/AutoScaling",
+		"Statistic": "Average",
+		"Period": 60,
+		"EvaluationPeriods": 2,
+		"Threshold": 2,
+		"ComparisonOperator": "LessThanThreshold",
+		"AlarmDescription": "Alert when healthy instances drop below minimum (2)",
+		"TreatMissingData": "notBreaching"
+	}
+]
 		"AlarmName": "alb-response-time-high",
 		"MetricName": "TargetResponseTime",
 		"Namespace": "AWS/ApplicationELB",

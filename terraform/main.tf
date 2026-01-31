@@ -6,10 +6,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
-    mongodbatlas = {
-      source  = "mongodb/mongodbatlas"
-      version = "~> 1.15"
-    }
+    # mongodbatlas = {
+    #   source  = "mongodb/mongodbatlas"
+    #   version = "~> 1.15"
+    # }
   }
 
   # Uncomment to use remote state
@@ -30,15 +30,14 @@ provider "aws" {
       Environment = var.environment
       Project     = "StartTech"
       ManagedBy   = "Terraform"
-      CreatedAt   = timestamp()
     }
   }
 }
 
-provider "mongodbatlas" {
-  public_key  = var.mongodb_public_key
-  private_key = var.mongodb_private_key
-}
+# provider "mongodbatlas" {
+#   public_key  = var.mongodb_public_key
+#   private_key = var.mongodb_private_key
+# }
 
 # Networking Module
 module "networking" {

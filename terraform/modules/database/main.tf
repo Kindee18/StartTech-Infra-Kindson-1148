@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    mongodbatlas = {
+      source  = "mongodb/mongodbatlas"
+      version = "~> 1.15"
+    }
+  }
+}
+
 # MongoDB Atlas Project (if using managed MongoDB)
 # Note: This requires MongoDB Atlas API key and organization ID to be set as environment variables
 # export MONGODB_ATLAS_PUBLIC_KEY=xxx
@@ -14,9 +23,8 @@
 resource "mongodbatlas_project" "starttech" {
   count = var.use_mongodb_atlas ? 1 : 0
   
-  name             = "${var.environment}-starttech"
-  org_id           = var.mongodb_org_id
-  billing_enabled  = true
+  name   = "${var.environment}-starttech"
+  org_id = var.mongodb_org_id
 
   tags = merge(
     var.common_tags,
@@ -49,7 +57,7 @@ resource "mongodbatlas_cluster" "starttech" {
   # High availability
   num_shards = var.mongodb_num_shards
   
-  tags = var.common_tags
+  # tags = var.common_tags  # Not supported in MongoDB Atlas provider
 }
 
 # MongoDB Atlas Database User
@@ -72,18 +80,14 @@ resource "mongodbatlas_database_user" "starttech_app" {
   }
 }
 
-# MongoDB Atlas Project IP Whitelist
-resource "mongodbatlas_project_ip_allowlist" "ec2_instances" {
-  count = var.use_mongodb_atlas ? 1 : 0
-  
-  project_id = mongodbatlas_project.starttech[0].id
-  
-  # Allow all instances in the VPC by their security group
-  # For more restrictive access, add specific IP addresses or CIDR blocks
-  # This example allows from anywhere (use with caution in production)
-  cidr_block = "0.0.0.0/0"
-  comment    = "Allow EC2 instances to connect to MongoDB Atlas"
-}
+# MongoDB Atlas IP Whitelist (commented - use API to configure separately)
+# resource "mongodbatlas_project_ip_allowlist" "ec2_instances" {
+#   count = var.use_mongodb_atlas ? 1 : 0
+#   
+#   project_id = mongodbatlas_project.starttech[0].id
+#   ip_address = "0.0.0.0/0"
+#   comment    = "Allow EC2 instances to connect to MongoDB Atlas"
+# }
 
 # Connection String output for application
 locals {

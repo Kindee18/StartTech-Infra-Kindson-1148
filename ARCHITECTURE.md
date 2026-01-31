@@ -48,6 +48,50 @@ This document provides a detailed overview of the StartTech infrastructure archi
 
 ### Traffic Flow
 
+**Frontend (Static Content):**
+
+1. User requests → CloudFront edge location
+2. CloudFront caches from S3 origin
+3. S3 stores React static files
+4. Cache invalidation via API after deployments
+
+**Backend (API Requests):**
+
+1. User requests → ALB (Application Load Balancer)
+2. ALB routes to healthy EC2 instances
+3. EC2 instances run Go application in Docker containers
+4. Docker images pulled from ECR (Elastic Container Registry)
+5. Auto Scaling Group scales based on CPU utilization
+
+**Data Layer:**
+
+1. Backend queries MongoDB Atlas for data persistence
+2. Redis ElastiCache for session management and caching
+3. All credentials stored in AWS Secrets Manager
+
+### Security Groups
+
+**ALB Security Group:**
+
+- Inbound: HTTP (80) and HTTPS (443) from 0.0.0.0/0
+- Outbound: Allow all traffic
+
+**EC2 Instance Security Group:**
+
+- Inbound: Port 8080 (backend) from ALB security group
+- Inbound: Port 22 (SSH) from defined CIDR blocks
+- Outbound: Allow all traffic
+
+**ElastiCache Security Group:**
+
+- Inbound: Port 6379 (Redis) from EC2 security group
+- Outbound: Allow all traffic
+
+**RDS/MongoDB Security Group:**
+
+- Inbound: Port 27017 (MongoDB) from EC2 security group
+- Outbound: Allow all traffic
+
 1. **Inbound (Public)**
    - Internet → ALB (port 80/443) → EC2 instances
    - Requests validated by security groups

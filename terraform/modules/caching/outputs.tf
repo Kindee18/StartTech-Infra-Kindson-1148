@@ -18,7 +18,7 @@ output "cluster_id" {
   value       = aws_elasticache_cluster.redis.cluster_id
 }
 
-output "security_group_id" {
-  description = "Security group ID for Redis"
-  value       = aws_elasticache_cluster.redis.security_group_ids[0]
-}
+# output "security_group_id" {
+#   description = "Security group ID for Redis"
+#   value       = try(aws_elasticache_cluster.redis.security_group_ids[0], "")
+# }

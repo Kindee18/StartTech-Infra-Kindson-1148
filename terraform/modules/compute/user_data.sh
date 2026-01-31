@@ -21,8 +21,10 @@ docker run -d \
   -p ${backend_port}:${backend_port} \
   -e ENVIRONMENT=${environment} \
   -e PORT=${backend_port} \
-  -e REDIS_URL=${redis_endpoint} \
-  -e MONGODB_URI=${mongodb_connection_string} \
+  -e REDIS_ADDR=${redis_endpoint} \
+  -e MONGO_URI=${mongodb_connection_string} \
+  -e JWT_SECRET_KEY=${jwt_secret_key} \
+  -e JWT_EXPIRATION_HOURS=72 \
   -v /var/log:/var/log \
   --log-driver awslogs \
   --log-opt awslogs-group=${log_group_name} \

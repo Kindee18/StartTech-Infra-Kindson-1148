@@ -54,16 +54,7 @@ resource "aws_s3_bucket_policy" "alb_logs" {
   })
 }
 
-# ALB Access Logs Configuration
-resource "aws_lb" "alb_logging" {
-  count = var.enable_alb_logs ? 1 : 0
-
-  access_logs {
-    bucket  = aws_s3_bucket.alb_logs.id
-    prefix  = "alb-logs"
-    enabled = true
-  }
-}
+# ALB Access Logs Configuration - Note: Configure ALB logging directly in compute module
 
 # SNS Topic for Alarms
 resource "aws_sns_topic" "alarms" {
