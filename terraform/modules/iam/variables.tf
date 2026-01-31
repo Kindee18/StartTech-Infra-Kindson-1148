@@ -40,7 +40,7 @@ variable "github_branch" {
 variable "github_thumbprint" {
   description = "GitHub OIDC thumbprint"
   type        = string
-  default     = "6938fd4d98bab03faadb97b34396831e3780aea1"  # Current GitHub thumbprint
+  default     = "6938fd4d98bab03faadb97b34396831e3780aea1" # Current GitHub thumbprint
 }
 
 variable "frontend_bucket_arn" {

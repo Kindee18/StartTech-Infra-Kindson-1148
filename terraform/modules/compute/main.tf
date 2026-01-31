@@ -6,8 +6,8 @@ resource "aws_lb" "main" {
   security_groups    = [var.alb_security_group_id]
   subnets            = var.public_subnet_ids
 
-  enable_deletion_protection = var.enable_deletion_protection
-  enable_http2               = true
+  enable_deletion_protection       = var.enable_deletion_protection
+  enable_http2                     = true
   enable_cross_zone_load_balancing = true
 
   tags = merge(
@@ -155,12 +155,12 @@ resource "aws_launch_template" "backend" {
   }
 
   user_data = base64encode(templatefile("${path.module}/user_data.sh", {
-    environment          = var.environment
-    backend_port         = var.backend_port
-    docker_image         = var.docker_image
-    log_group_name       = var.log_group_name
-    aws_region          = var.aws_region
-    redis_endpoint      = var.redis_endpoint
+    environment               = var.environment
+    backend_port              = var.backend_port
+    docker_image              = var.docker_image
+    log_group_name            = var.log_group_name
+    aws_region                = var.aws_region
+    redis_endpoint            = var.redis_endpoint
     mongodb_connection_string = var.mongodb_connection_string
   }))
 
@@ -191,10 +191,10 @@ resource "aws_launch_template" "backend" {
 
 # Auto Scaling Group
 resource "aws_autoscaling_group" "backend" {
-  name                = "${var.environment}-backend-asg"
-  vpc_zone_identifier = var.private_subnet_ids
-  target_group_arns   = [aws_lb_target_group.backend.arn]
-  health_check_type   = "ELB"
+  name                      = "${var.environment}-backend-asg"
+  vpc_zone_identifier       = var.private_subnet_ids
+  target_group_arns         = [aws_lb_target_group.backend.arn]
+  health_check_type         = "ELB"
   health_check_grace_period = 300
 
   min_size         = var.min_size

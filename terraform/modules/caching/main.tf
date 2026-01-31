@@ -20,15 +20,15 @@ resource "aws_elasticache_cluster" "redis" {
   parameter_group_name = aws_elasticache_parameter_group.redis.name
   engine_version       = var.engine_version
   port                 = 6379
-  
-  subnet_group_name          = aws_elasticache_subnet_group.main.name
-  security_group_ids         = [var.security_group_id]
-  
+
+  subnet_group_name  = aws_elasticache_subnet_group.main.name
+  security_group_ids = [var.security_group_id]
+
   # Backup configuration
   snapshot_retention_limit = var.snapshot_retention_days
   snapshot_window          = var.snapshot_window
   maintenance_window       = var.maintenance_window
-  
+
   # Logs
   log_delivery_configuration {
     destination      = aws_cloudwatch_log_group.redis_slow_log.name
@@ -65,12 +65,12 @@ resource "aws_elasticache_parameter_group" "redis" {
   # Performance tuning parameters
   parameter {
     name  = "maxmemory-policy"
-    value = "allkeys-lru"  # Evict LRU keys when memory limit is reached
+    value = "allkeys-lru" # Evict LRU keys when memory limit is reached
   }
 
   parameter {
     name  = "timeout"
-    value = "300"  # Connection idle timeout
+    value = "300" # Connection idle timeout
   }
 
   parameter {
