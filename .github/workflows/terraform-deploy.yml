@@ -161,6 +161,13 @@ jobs:
 
       - name: Terraform Apply
         working-directory: terraform
+        env:
+          TF_VAR_mongodb_password: ${{ secrets.MONGODB_PASSWORD }}
+          TF_VAR_mongodb_username: ${{ secrets.MONGODB_USERNAME }}
+          TF_VAR_mongodb_org_id: ${{ secrets.MONGODB_ORG_ID }}
+          TF_VAR_mongodb_public_key: ${{ secrets.MONGODB_PUBLIC_KEY }}
+          TF_VAR_mongodb_private_key: ${{ secrets.MONGODB_PRIVATE_KEY }}
+          TF_VAR_jwt_secret_key: ${{ secrets.JWT_SECRET_KEY }}
         run: terraform apply -input=false tfplan
 
       - name: Export Outputs
