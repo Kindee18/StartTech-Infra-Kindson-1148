@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: Verify Confirmation
         run: |
-          if [ "${{ github.event.inputs.confirm }}" != "YES" ]; then
+          if [ "${{ github.event.inputs.confirm }}" != "YES" ] && [ "${{ github.event.inputs.confirm }}" != "yes" ]; then
             echo "❌ Destruction cancelled. Confirmation not received."
             exit 1
           fi
@@ -44,6 +44,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ secrets.TERRAFORM_ROLE_NAME }}
           aws-region: ${{ env.AWS_REGION }}
+          audience: sts.amazonaws.com
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -68,6 +69,8 @@ jobs:
           TF_VAR_mongodb_password: ${{ secrets.MONGODB_PASSWORD }}
           TF_VAR_mongodb_username: ${{ secrets.MONGODB_USERNAME }}
           TF_VAR_mongodb_org_id: ${{ secrets.MONGODB_ORG_ID }}
+          TF_VAR_mongodb_public_key: ${{ secrets.MONGODB_PUBLIC_KEY }}
+          TF_VAR_mongodb_private_key: ${{ secrets.MONGODB_PRIVATE_KEY }}
           TF_VAR_environment: ${{ github.event.inputs.environment }}
           TF_VAR_jwt_secret_key: ${{ secrets.JWT_SECRET_KEY }}
         run: terraform plan -destroy -out=tfplan
