@@ -80,7 +80,7 @@ module "compute" {
   log_group_name             = module.monitoring.backend_log_group_name
   aws_region                 = var.aws_region
   aws_account_id             = data.aws_caller_identity.current.account_id
-  ecr_repository_arn         = aws_ecr_repository.backend.arn
+  ecr_repository_arn         = data.aws_ecr_repository.backend.arn
   redis_endpoint             = "redis://${module.caching.redis_endpoint}:${module.caching.redis_port}"
   mongodb_connection_string  = module.database.mongodb_connection_string
   jwt_secret_key             = var.jwt_secret_key
@@ -154,48 +154,9 @@ module "iam" {
   common_tags                = local.common_tags
 }
 
-# ECR Repository for Backend Docker Images
-resource "aws_ecr_repository" "backend" {
-  name                 = "${var.environment}-starttech-backend"
-  image_tag_mutability = "MUTABLE"
-  force_delete         = false
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-
-  encryption_configuration {
-    encryption_type = "AES256"
-  }
-
-  tags = merge(
-    local.common_tags,
-    {
-      Name = "${var.environment}-backend-repo"
-    }
-  )
-}
-
-# ECR Lifecycle Policy
-resource "aws_ecr_lifecycle_policy" "backend" {
-  repository = aws_ecr_repository.backend.name
-
-  policy = jsonencode({
-    rules = [
-      {
-        rulePriority = 1
-        description  = "Keep last 10 images"
-        selection = {
-          tagStatus   = "any"
-          countType   = "imageCountMoreThan"
-          countNumber = 10
-        }
-        action = {
-          type = "expire"
-        }
-      }
-    ]
-  })
+# Reference ECR Repository (pre-created bootstrap resource)
+data "aws_ecr_repository" "backend" {
+  name = "${var.environment}-starttech-backend"
 }
 
 # Get current AWS account ID and caller identity

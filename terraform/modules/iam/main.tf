@@ -1,15 +1,6 @@
-# GitHub OIDC Provider
-resource "aws_iam_openid_connect_provider" "github" {
-  client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = [var.github_thumbprint]
-  url             = "https://token.actions.githubusercontent.com"
-
-  tags = merge(
-    var.common_tags,
-    {
-      Name = "github-oidc-provider"
-    }
-  )
+# Reference GitHub OIDC Provider (pre-created bootstrap resource)
+data "aws_iam_openid_connect_provider" "github" {
+  url = "https://token.actions.githubusercontent.com"
 }
 
 # IAM Role for GitHub Actions CI/CD (Frontend Deployment)
@@ -22,7 +13,7 @@ resource "aws_iam_role" "github_frontend_role" {
       {
         Effect = "Allow"
         Principal = {
-          Federated = aws_iam_openid_connect_provider.github.arn
+          Federated = data.aws_iam_openid_connect_provider.github.arn
         }
         Action = "sts:AssumeRoleWithWebIdentity"
         Condition = {
@@ -84,7 +75,7 @@ resource "aws_iam_role" "github_backend_role" {
       {
         Effect = "Allow"
         Principal = {
-          Federated = aws_iam_openid_connect_provider.github.arn
+          Federated = data.aws_iam_openid_connect_provider.github.arn
         }
         Action = "sts:AssumeRoleWithWebIdentity"
         Condition = {
@@ -155,7 +146,7 @@ resource "aws_iam_role" "github_infra_role" {
       {
         Effect = "Allow"
         Principal = {
-          Federated = aws_iam_openid_connect_provider.github.arn
+          Federated = data.aws_iam_openid_connect_provider.github.arn
         }
         Action = "sts:AssumeRoleWithWebIdentity"
         Condition = {
