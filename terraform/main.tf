@@ -147,7 +147,7 @@ module "iam" {
   github_thumbprint          = var.github_thumbprint
   frontend_bucket_arn        = module.storage.frontend_bucket_arn
   cloudfront_distribution_id = module.storage.cloudfront_distribution_id
-  ecr_repository_arn         = aws_ecr_repository.backend.arn
+  ecr_repository_arn         = data.aws_ecr_repository.backend.arn
   terraform_state_bucket     = module.storage.terraform_state_bucket_name
   terraform_locks_table      = module.storage.terraform_locks_table_name
   create_dev_user            = var.create_dev_user
