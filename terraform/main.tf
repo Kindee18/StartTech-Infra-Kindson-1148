@@ -12,14 +12,14 @@ terraform {
     # }
   }
 
-  # Uncomment to use remote state
-  # backend "s3" {
-  #   bucket         = "your-terraform-state-bucket"
-  #   key            = "starttech/terraform.tfstate"
-  #   region         = "us-east-1"
-  #   encrypt        = true
-  #   dynamodb_table = "your-terraform-locks-table"
-  # }
+  # Remote state backend
+  backend "s3" {
+    bucket         = "dev-starttech-terraform-state-125168806853"
+    key            = "starttech/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    dynamodb_table = "dev-starttech-terraform-locks"
+  }
 }
 
 provider "aws" {
