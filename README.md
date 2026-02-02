@@ -60,14 +60,15 @@ terraform/              # Terraform root configuration
     └── iam/           # IAM roles, OIDC
 
 .github/workflows/      # GitHub Actions
-├── terraform-deploy.yml
+├── infrastructure-deploy.yml
 ├── terraform-validate.yml
 └── terraform-destroy.yml
 
 scripts/                # Deployment scripts
 ├── deploy-infrastructure.sh
 ├── validate-infrastructure.sh
-└── health-check.sh
+├── health-check.sh
+└── rollback.sh
 
 monitoring/             # Monitoring config
 ├── cloudwatch-dashboard.json
