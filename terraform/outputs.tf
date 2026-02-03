@@ -103,3 +103,13 @@ output "github_oidc_provider_arn" {
   description = "GitHub OIDC provider ARN"
   value       = module.iam.github_oidc_provider_arn
 }
+
+output "codedeploy_app_name" {
+  description = "CodeDeploy Application Name"
+  value       = module.compute.codedeploy_app_name
+}
+
+output "codedeploy_deployment_group_name" {
+  description = "CodeDeploy Deployment Group Name"
+  value       = module.compute.codedeploy_deployment_group_name
+}
