@@ -32,13 +32,4 @@ output "launch_template_id" {
   description = "ID of the launch template"
   value       = aws_launch_template.backend.id
 }
-
-output "codedeploy_app_name" {
-  description = "CodeDeploy Application Name"
-  value       = aws_codedeploy_app.backend.name
-}
-
-output "codedeploy_deployment_group_name" {
-  description = "CodeDeploy Deployment Group Name"
-  value       = aws_codedeploy_deployment_group.backend.deployment_group_name
 }

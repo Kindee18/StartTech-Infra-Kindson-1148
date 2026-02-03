@@ -136,9 +136,6 @@ echo ""
 
 # Backend Secrets
 echo "Backend Secrets:"
-set_secret "CODEDEPLOY_APP" "$(get_tf_output "codedeploy_app_name")"
-set_secret "CODEDEPLOY_GROUP_STAGING" "$(get_tf_output "codedeploy_deployment_group_name")"
-set_secret "CODEDEPLOY_GROUP_PROD" "$(get_tf_output "codedeploy_deployment_group_name")"
 set_secret "CODEDEPLOY_S3_BUCKET" "${S3_BUCKET}"
 echo ""
 
