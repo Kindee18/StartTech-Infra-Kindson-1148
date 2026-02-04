@@ -35,7 +35,7 @@ output "cloudfront_domain_name" {
 
 output "ecr_repository_url" {
   description = "ECR repository URL"
-  value       = data.aws_ecr_repository.backend.repository_url
+  value       = aws_ecr_repository.backend.repository_url
 }
 
 output "mongodb_connection_string" {

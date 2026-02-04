@@ -13,4 +13,5 @@ terraform/.terraform.tfstate.lock.info
 *.swo
 
 # OS
-.DS_Store
+.DS_Storenuke-config.yml
+aws-nuke.tar.gz

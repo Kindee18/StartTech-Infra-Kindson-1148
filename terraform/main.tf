@@ -80,7 +80,7 @@ module "compute" {
   log_group_name             = module.monitoring.backend_log_group_name
   aws_region                 = var.aws_region
   aws_account_id             = data.aws_caller_identity.current.account_id
-  ecr_repository_arn         = data.aws_ecr_repository.backend.arn
+  ecr_repository_arn         = aws_ecr_repository.backend.arn
   redis_endpoint             = "redis://${module.caching.redis_endpoint}:${module.caching.redis_port}"
   mongodb_connection_string  = module.database.mongodb_connection_string
   jwt_secret_key             = var.jwt_secret_key
@@ -147,7 +147,7 @@ module "iam" {
   github_thumbprint          = var.github_thumbprint
   frontend_bucket_arn        = module.storage.frontend_bucket_arn
   cloudfront_distribution_id = module.storage.cloudfront_distribution_id
-  ecr_repository_arn         = data.aws_ecr_repository.backend.arn
+  ecr_repository_arn         = aws_ecr_repository.backend.arn
   terraform_state_bucket     = module.storage.terraform_state_bucket_name
   terraform_locks_table      = module.storage.terraform_locks_table_name
   create_dev_user            = var.create_dev_user
@@ -155,8 +155,15 @@ module "iam" {
 }
 
 # Reference ECR Repository (pre-created bootstrap resource)
-data "aws_ecr_repository" "backend" {
-  name = "${var.environment}-starttech-backend"
+# ECR Repository (Re-created after nuke)
+resource "aws_ecr_repository" "backend" {
+  name                 = "${var.environment}-starttech-backend"
+  image_tag_mutability = "MUTABLE"
+  force_delete         = true
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
 }
 
 # Get current AWS account ID and caller identity
