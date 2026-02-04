@@ -16,7 +16,7 @@ instance_type                  = "t3.micro" # Using t3.micro for guaranteed Free
 min_size                       = 1          # Starting with 1 instance for testing
 max_size                       = 4
 desired_capacity               = 1
-health_check_path              = "/health"
+health_check_path              = "/"
 enable_alb_deletion_protection = false
 docker_image                   = "125168806853.dkr.ecr.us-east-1.amazonaws.com/dev-starttech-backend:latest"
 

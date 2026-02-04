@@ -1,6 +1,6 @@
 # Application Load Balancer
 resource "aws_lb" "main" {
-  name               = "${var.environment}-alb"
+  name               = "${var.environment}-alb-v2"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [var.alb_security_group_id]
@@ -13,14 +13,14 @@ resource "aws_lb" "main" {
   tags = merge(
     var.common_tags,
     {
-      Name = "${var.environment}-alb"
+      Name = "${var.environment}-alb-v2"
     }
   )
 }
 
 # ALB Target Group
 resource "aws_lb_target_group" "backend" {
-  name        = "${var.environment}-backend-tg"
+  name        = "${var.environment}-backend-tg-v2"
   port        = var.backend_port
   protocol    = "HTTP"
   vpc_id      = var.vpc_id

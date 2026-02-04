@@ -10,6 +10,27 @@ systemctl start docker
 systemctl enable docker
 usermod -aG docker ec2-user
 
+# Create config directory
+mkdir -p /etc/starttech
+
+# Initialize variables from Terraform template
+export ECR_REGISTRY=$(echo "${docker_image}" | cut -d/ -f1)
+export FULL_IMAGE="${docker_image}"
+
+# Create environment file
+cat <<EOF > /etc/starttech/config.env
+ENVIRONMENT=${environment}
+BACKEND_PORT=${backend_port}
+DOCKER_IMAGE=${docker_image}
+LOG_GROUP_NAME=${log_group_name}
+AWS_REGION=${aws_region}
+REDIS_ENDPOINT=${redis_endpoint}
+MONGODB_CONNECTION_STRING='${mongodb_connection_string}'
+JWT_SECRET_KEY='${jwt_secret_key}'
+ECR_REGISTRY=$ECR_REGISTRY
+FULL_IMAGE=$FULL_IMAGE
+EOF
+
 # Startup Docker Container
 source /etc/starttech/config.env
 
