@@ -11,6 +11,7 @@ private_subnet_cidrs = ["10.0.10.0/24", "10.0.11.0/24"]
 ssh_allowed_cidrs    = ["0.0.0.0/0"] # TODO: Restrict to your IP in production
 
 # Compute
+jwt_secret_key                 = "super-secret-key-123"
 backend_port                   = 8080
 instance_type                  = "t3.micro" # Using t3.micro for guaranteed Free Tier eligibility
 min_size                       = 1          # Starting with 1 instance for testing
@@ -20,17 +21,18 @@ health_check_path              = "/"
 enable_alb_deletion_protection = false
 docker_image                   = "125168806853.dkr.ecr.us-east-1.amazonaws.com/dev-starttech-backend:latest"
 
-# Database - MongoDB Atlas (will be configured later)
-use_mongodb_atlas     = false # Set to false for now, will configure later
+# Database - MongoDB Atlas
+use_mongodb_atlas     = true
 mongodb_org_id        = ""
+mongodb_project_id    = "6981b6e450f691990e6a1292"
 mongodb_region        = "US_EAST_1"
 mongodb_instance_type = "M0" # Free tier for testing
-mongodb_version       = "7.0"
+mongodb_version       = "8.0"
 mongodb_num_shards    = 1
 mongodb_username      = "starttech_app"
 mongodb_password      = "ChangeMe123!" # TODO: Change this!
-mongodb_public_key    = ""
-mongodb_private_key   = ""
+mongodb_public_key    = "oiqjrbih"
+mongodb_private_key   = "1e906836-2ae4-48b4-a4a0-a2a47aa0b849"
 
 # Caching - Redis
 redis_node_type               = "cache.t3.micro"

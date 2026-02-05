@@ -6,10 +6,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
-    # mongodbatlas = {
-    #   source  = "mongodb/mongodbatlas"
-    #   version = "~> 1.15"
-    # }
+    mongodbatlas = {
+      source  = "mongodb/mongodbatlas"
+      version = "~> 1.15"
+    }
   }
 
   # Remote state backend
@@ -34,10 +34,10 @@ provider "aws" {
   }
 }
 
-# provider "mongodbatlas" {
-#   public_key  = var.mongodb_public_key
-#   private_key = var.mongodb_private_key
-# }
+provider "mongodbatlas" {
+  public_key  = var.mongodb_public_key
+  private_key = var.mongodb_private_key
+}
 
 # Networking Module
 module "networking" {
@@ -81,8 +81,9 @@ module "compute" {
   aws_region                 = var.aws_region
   aws_account_id             = data.aws_caller_identity.current.account_id
   ecr_repository_arn         = aws_ecr_repository.backend.arn
-  redis_endpoint             = "redis://${module.caching.redis_endpoint}:${module.caching.redis_port}"
+  redis_endpoint             = "${module.caching.redis_endpoint}:${module.caching.redis_port}"
   mongodb_connection_string  = module.database.mongodb_connection_string
+  mongodb_db_name            = module.database.mongodb_database_name
   jwt_secret_key             = var.jwt_secret_key
   enable_deletion_protection = var.enable_alb_deletion_protection
   common_tags                = local.common_tags
@@ -95,6 +96,7 @@ module "database" {
   use_mongodb_atlas     = var.use_mongodb_atlas
   environment           = var.environment
   mongodb_org_id        = var.mongodb_org_id
+  mongodb_project_id    = var.mongodb_project_id
   mongodb_region        = var.mongodb_region
   mongodb_instance_type = var.mongodb_instance_type
   mongodb_version       = var.mongodb_version

@@ -132,6 +132,12 @@ resource "aws_iam_role_policy" "ec2_ecr" {
   })
 }
 
+# Attach SSM Managed Instance Core policy
+resource "aws_iam_role_policy_attachment" "ec2_ssm" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
 # IAM Instance Profile
 resource "aws_iam_instance_profile" "ec2_profile" {
   name = "${var.environment}-ec2-profile"
@@ -162,6 +168,7 @@ resource "aws_launch_template" "backend" {
     aws_region                = var.aws_region
     redis_endpoint            = var.redis_endpoint
     mongodb_connection_string = var.mongodb_connection_string
+    mongodb_db_name            = var.mongodb_db_name
     jwt_secret_key            = var.jwt_secret_key
   }))
 

@@ -15,6 +15,12 @@ variable "mongodb_org_id" {
   default     = ""
 }
 
+variable "mongodb_project_id" {
+  description = "MongoDB Atlas Project ID (optional, if using existing project)"
+  type        = string
+  default     = ""
+}
+
 variable "mongodb_region" {
   description = "MongoDB Atlas region"
   type        = string

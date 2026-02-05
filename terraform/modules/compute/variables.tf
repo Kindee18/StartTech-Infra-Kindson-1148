@@ -106,6 +106,11 @@ variable "mongodb_connection_string" {
   sensitive   = true
 }
 
+variable "mongodb_db_name" {
+  description = "MongoDB database name"
+  type        = string
+}
+
 variable "jwt_secret_key" {
   description = "JWT secret key for backend"
   type        = string
