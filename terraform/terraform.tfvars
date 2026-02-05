@@ -13,11 +13,11 @@ ssh_allowed_cidrs    = ["0.0.0.0/0"] # TODO: Restrict to your IP in production
 # Compute
 jwt_secret_key                 = "super-secret-key-123"
 backend_port                   = 8080
-instance_type                  = "t3.micro" # Using t3.micro for guaranteed Free Tier eligibility
-min_size                       = 1          # Starting with 1 instance for testing
-max_size                       = 4
-desired_capacity               = 1
-health_check_path              = "/"
+instance_type                  = "t3.micro"
+min_size                       = 2
+max_size                       = 6
+desired_capacity               = 2
+health_check_path              = "/health"
 enable_alb_deletion_protection = false
 docker_image                   = "125168806853.dkr.ecr.us-east-1.amazonaws.com/dev-starttech-backend:latest"
 
