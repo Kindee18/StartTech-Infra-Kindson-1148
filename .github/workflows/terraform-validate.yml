@@ -49,8 +49,9 @@ jobs:
         working-directory: terraform
         run: tflint -f compact
 
-      - name: Setup TFSec
-        uses: aquasecurity/tfsec-action@v1.0.0
+      - name: Install TFSec
+        run: |
+          curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
 
       - name: Run TFSec
         working-directory: terraform
