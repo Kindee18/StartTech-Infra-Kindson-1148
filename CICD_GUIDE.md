@@ -192,7 +192,7 @@ AWS_ACCOUNT_ID                 # AWS Account ID
 TERRAFORM_ROLE_NAME           # IAM role for Terraform
 TERRAFORM_STATE_BUCKET        # S3 bucket for Terraform state
 TERRAFORM_LOCKS_TABLE         # DynamoDB table for state locks
-SLACK_WEBHOOK                 # Slack webhook for notifications
+
 ENVIRONMENT                   # Deployment environment (dev/staging/prod)
 
 # MongoDB Atlas (if using)

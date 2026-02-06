@@ -92,7 +92,7 @@ This checklist verifies that all required components for the Month 3 Assessment 
   - [x] PR commenting
   - [x] Plan application on main
   - [x] Output generation
-  - [x] Slack notifications
+
   - [x] File: `.github/workflows/terraform-deploy.yml`
 
 - [x] **terraform-validate.yml**

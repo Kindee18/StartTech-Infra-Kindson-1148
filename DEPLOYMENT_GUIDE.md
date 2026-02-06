@@ -366,7 +366,7 @@ MONGODB_PASSWORD            # Database password
 MONGODB_ORG_ID              # MongoDB Atlas org ID
 MONGODB_PUBLIC_KEY          # Atlas API key
 MONGODB_PRIVATE_KEY         # Atlas API secret
-SLACK_WEBHOOK               # For notifications (optional)
+
 ```
 
 ## 📝 Configuration Variables
