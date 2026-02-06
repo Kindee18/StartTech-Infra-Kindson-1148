@@ -168,7 +168,7 @@ resource "aws_launch_template" "backend" {
     aws_region                = var.aws_region
     redis_endpoint            = var.redis_endpoint
     mongodb_connection_string = var.mongodb_connection_string
-    mongodb_db_name            = var.mongodb_db_name
+    mongodb_db_name           = var.mongodb_db_name
     jwt_secret_key            = var.jwt_secret_key
   }))
 

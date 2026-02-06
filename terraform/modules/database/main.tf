@@ -51,8 +51,8 @@ resource "mongodbatlas_cluster" "starttech" {
   mongo_db_major_version = var.mongodb_version
 
   # Backup and Auto-scaling (Disabled for M0 Free Tier)
-  backup_enabled                          = false
-  auto_scaling_disk_gb_enabled            = false
+  backup_enabled               = false
+  auto_scaling_disk_gb_enabled = false
 
   # High availability
   num_shards = var.mongodb_num_shards
@@ -83,7 +83,7 @@ resource "mongodbatlas_database_user" "starttech_app" {
 # MongoDB Atlas IP Access List (Allowing all for now to ensure connectivity)
 resource "mongodbatlas_project_ip_access_list" "ec2_instances" {
   count = var.use_mongodb_atlas ? 1 : 0
-  
+
   project_id = var.mongodb_project_id != "" ? var.mongodb_project_id : mongodbatlas_project.starttech[0].id
   cidr_block = "0.0.0.0/0"
   comment    = "Allow EC2 instances to connect to MongoDB Atlas"
