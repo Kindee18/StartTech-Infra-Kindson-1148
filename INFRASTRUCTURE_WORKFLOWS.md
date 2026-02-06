@@ -202,11 +202,7 @@ https://console.aws.amazon.com/cloudwatch/home#dashboards:name=dev-starttech-das
 - Check for manual AWS resource changes
 - Review CloudWatch logs
 
-### Slack notifications not working
 
-- `SLACK_WEBHOOK` secret is optional (workflow continues without it)
-- To enable: Add Slack webhook to GitHub secrets
-- Test webhook: `curl -X POST $SLACK_WEBHOOK -d '{"text":"test"}'`
 
 ## 📋 Best Practices
 
