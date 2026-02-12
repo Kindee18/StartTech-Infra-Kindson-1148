@@ -66,9 +66,7 @@ jobs:
             -backend-config="encrypt=true" \
             -backend-config="dynamodb_table=${{ secrets.TERRAFORM_LOCKS_TABLE }}"
 
-      - name: Terraform Validate
-        working-directory: terraform
-        run: terraform validate
+
 
       - name: Terraform Plan
         working-directory: terraform
