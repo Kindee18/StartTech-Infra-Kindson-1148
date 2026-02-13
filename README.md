@@ -2,7 +2,12 @@
 
 
 > [!NOTE]
-> **Deployment Status**: Use of live resources (ALB, RDS, CloudFront) has been suspended to avoid ongoing AWS costs. The infrastructure code remains fully functional and can be redeployed using the instructions below.
+> **Deployment Status**: Use of live resources (ALB, RDS, CloudFront) has been suspended to avoid ongoing AWS costs.
+>
+> **To Redeploy (Restore System):**
+> 1. Run **Infrastructure Deployment** workflow (creates servers/DBs).
+> 2. Run **Backend CI/CD** workflow (builds Docker image & pushes to ECR).
+> 3. Run **Frontend CI/CD** workflow (builds React app & uploads to S3).
 
 Complete Terraform-based infrastructure for the StartTech full-stack application with AWS deployment, CI/CD automation, and comprehensive monitoring.
 
