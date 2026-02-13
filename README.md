@@ -266,3 +266,7 @@ For issues:
 ## 📄 License
 
 Part of the StartTech project.
+
+## 🔗 Related Repositories
+
+- **Application Repo**: [StartTech-Kindson-1148](https://github.com/Kindee18/StartTech-Kindson-1148)
