@@ -13,7 +13,8 @@ terraform/.terraform.tfstate.lock.info
 *.swo
 
 # OS
-.DS_Storenuke-config.yml
+.DS_Store
+nuke-config.yml
 aws-nuke.tar.gz
 *.log
 secrets.auto.tfvars
