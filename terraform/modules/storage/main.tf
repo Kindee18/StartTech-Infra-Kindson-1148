@@ -2,6 +2,8 @@
 resource "aws_s3_bucket" "frontend" {
   bucket = "${var.environment}-starttech-frontend-${data.aws_caller_identity.current.account_id}"
 
+  force_destroy = true
+
   tags = merge(
     var.common_tags,
     {
