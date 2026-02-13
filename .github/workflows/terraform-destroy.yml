@@ -88,22 +88,3 @@ jobs:
           TF_VAR_jwt_secret_key: ${{ secrets.JWT_SECRET_KEY }}
         run: terraform apply -auto-approve tfplan
 
-      - name: Send Destruction Notification
-        if: success()
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          payload: |
-            {
-              "text": "✅ Infrastructure destroyed",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Infrastructure Destruction Successful*\nEnvironment: ${{ github.event.inputs.environment }}\nRepository: ${{ github.repository }}"
-                  }
-                }
-              ]
-            }
-        env:
-
