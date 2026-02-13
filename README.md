@@ -1,5 +1,9 @@
 # StartTech Infrastructure as Code
 
+
+> [!NOTE]
+> **Deployment Status**: Use of live resources (ALB, RDS, CloudFront) has been suspended to avoid ongoing AWS costs. The infrastructure code remains fully functional and can be redeployed using the instructions below.
+
 Complete Terraform-based infrastructure for the StartTech full-stack application with AWS deployment, CI/CD automation, and comprehensive monitoring.
 
 ## 📋 Table of Contents
