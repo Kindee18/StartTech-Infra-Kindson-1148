@@ -5,9 +5,10 @@
 > **Deployment Status**: Use of live resources (ALB, RDS, CloudFront) has been suspended to avoid ongoing AWS costs.
 >
 > **To Redeploy (Restore System):**
-> 1. Run [Infrastructure Deployment](.github/workflows/infrastructure-deploy.yml) workflow (creates servers/DBs).
-> 2. Run [Backend CI/CD](https://github.com/Kindee18/StartTech-Kindson-1148/blob/main/.github/workflows/backend-ci-cd.yml) workflow (builds Docker image & pushes to ECR).
-> 3. Run [Frontend CI/CD](https://github.com/Kindee18/StartTech-Kindson-1148/blob/main/.github/workflows/frontend-ci-cd.yml) workflow (builds React app & uploads to S3).
+> 1. **(If destroyed)** Run `./scripts/restore-oidc.sh` locally to restore AWS access for GitHub.
+> 2. Run [Infrastructure Deployment](.github/workflows/infrastructure-deploy.yml) workflow (creates servers/DBs).
+> 3. Run [Backend CI/CD](https://github.com/Kindee18/StartTech-Kindson-1148/blob/main/.github/workflows/backend-ci-cd.yml) workflow (builds Docker image & pushes to ECR).
+> 4. Run [Frontend CI/CD](https://github.com/Kindee18/StartTech-Kindson-1148/blob/main/.github/workflows/frontend-ci-cd.yml) workflow (builds React app & uploads to S3).
 
 Complete Terraform-based infrastructure for the StartTech full-stack application with AWS deployment, CI/CD automation, and comprehensive monitoring.
 
