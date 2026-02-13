@@ -1,9 +1,8 @@
 # Reference GitHub OIDC Provider (pre-created bootstrap resource)
 # GitHub OIDC Provider (Re-created after nuke)
-resource "aws_iam_openid_connect_provider" "github" {
-  url             = "https://token.actions.githubusercontent.com"
-  client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = [var.github_thumbprint]
+# Reference GitHub OIDC Provider (Managed by restore-oidc.sh)
+data "aws_iam_openid_connect_provider" "github" {
+  url = "https://token.actions.githubusercontent.com"
 }
 
 # IAM Role for GitHub Actions CI/CD (Frontend Deployment)

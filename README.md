@@ -17,13 +17,15 @@ Complete Terraform-based infrastructure for the StartTech full-stack application
 1. [Architecture Overview](#architecture-overview)
 2. [Prerequisites](#prerequisites)
 3. [Directory Structure](#directory-structure)
-4. [Quick Start](#quick-start)
-5. [Configuration](#configuration)
-6. [Deployment](#deployment)
-7. [GitHub OIDC Setup](#github-oidc-setup)
-8. [Monitoring & Logging](#monitoring--logging)
-9. [Troubleshooting](#troubleshooting)
-10. [Security](#security)
+4. [Key Directories](#key-directories)
+5. [Deployment Guide (Zero to Hero)](#deployment-guide-zero-to-hero)
+6. [Destruction Guide](#destruction-guide-cost-saving)
+7. [Helper Scripts](#helper-scripts)
+8. [Monitoring & Logging](#monitoring)
+9. [GitHub OIDC Setup](#github-oidc)
+10. [Troubleshooting](#troubleshooting)
+11. [Security](#security)
+12. [Cost Optimization](#cost-optimization)
 
 ## 🏗️ Architecture Overview
 
@@ -78,7 +80,9 @@ scripts/                # Deployment scripts
 ├── deploy-infrastructure.sh
 ├── validate-infrastructure.sh
 ├── health-check.sh
-└── rollback.sh
+├── rollback.sh
+├── restore-oidc.sh     # Restore GitHub access
+└── nuke-s3.sh          # Cleanup S3 buckets
 
 monitoring/             # Monitoring config
 ├── cloudwatch-dashboard.json
@@ -86,78 +90,104 @@ monitoring/             # Monitoring config
 └── log-insights-queries.txt
 ```
 
-## 🚀 Quick Start
+## 🚀 Deployment Guide (Zero to Hero)
+
+### 1. Prerequisites
+- **AWS Account**: You need an AWS account with Admin permissions.
+- **GitHub Secrets**: Ensure `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` are set in this repo for the OIDC Bootstrap (first run only) or local usage.
+- **Terraform State**: The bootstrap process (or manual setup) must create the S3 bucket (`dev-starttech-terraform-state-...`) and DynamoDB table.
+
+### 2. Redeploying from Scratch (The "Wake Up" Protocol)
+If the infrastructure has been destroyed, you must restore the OIDC link before GitHub Actions can work.
+
+**Step 0: Restore OIDC (Local Terminal)**
+```bash
+# From the root of this repo
+./scripts/restore-oidc.sh
+```
+*This re-establishes the trust between GitHub and your AWS account.*
+
+**Step 1: Provision Infrastructure (GitHub Actions)**
+1. Go to **Actions** tab.
+2. Select **Infrastructure Deployment**.
+3. Click **Run workflow** -> Select `main` branch -> **Run workflow**.
+4. Wait for completion (creates VPC, ALB, ASG, RDS, ElastiCache, S3, CloudFront).
+
+**Step 2: Deploy Application (Application Repo)**
+Once infrastructure is ready, go to the [Application Repository](https://github.com/Kindee18/StartTech-Kindson-1148) and run its pipelines:
+1. **Backend CI/CD**: Builds Docker image, pushes to ECR, updates ASG.
+2. **Frontend CI/CD**: Builds React app, syncs to S3, invalidates CloudFront.
+
+---
+
+## 💥 Destruction Guide (Cost Saving)
+
+To pause the project and stop paying for resources (~$172/mo), adhere to this process.
+
+### Method 1: Automated Destruction (Recommended)
+1. Go to **Actions** tab in this repository.
+2. Select **Destroy Infrastructure** workflow.
+3. Click **Run workflow**.
+4. **Input Required**:
+   - Environment: `dev`
+   - Confirmation: `YES`
+5. Run the workflow. It will automatically wipe all resources including S3 buckets and ECR repositories.
+
+### Method 2: Manual Destruction (Fallback)
+If GitHub Actions fails (e.g., OIDC issues), run this locally:
 
 ```bash
-# 1. Clone repository
-git clone https://github.com/Kindee18/StartTech-Infra-Kindson-1148.git
-cd StartTech-Infra-Kindson-1148
+cd terraform
+# Ensure you have AWS credentials exported in your terminal
+export AWS_ACCESS_KEY_ID=...
+export AWS_SECRET_ACCESS_KEY=...
 
-# 2. Configure variables
-cp terraform/terraform.tfvars.example terraform/terraform.tfvars
-nano terraform/terraform.tfvars
-
-# 3. Initialize Terraform
-cd terraform && terraform init
-
-# 4. Plan deployment
-../scripts/deploy-infrastructure.sh dev plan
-
-# 5. Apply
-../scripts/deploy-infrastructure.sh dev apply
-
-# 6. Verify
-../scripts/health-check.sh dev
+# Run Destroy
+terraform init
+terraform destroy -auto-approve -var-file="secrets.auto.tfvars"
 ```
 
-## ⚙️ Configuration
+### ⚠️ Troubleshooting Destruction
+- **"BucketNotEmpty"**: If S3 destroy fails, run: `scripts/nuke-s3.sh` locally.
+- **"No OpenIDConnect provider"**: Run `scripts/restore-oidc.sh` locally, then retry Method 1.
 
-Key variables in `terraform.tfvars`:
+---
 
-```hcl
-aws_region           = "us-east-1"
-environment          = "dev"
-instance_type        = "t3.medium"
-min_size             = 2
-max_size             = 6
-mongodb_username     = "starttech_app"
-mongodb_password     = "your-password"
-redis_node_type      = "cache.t3.micro"
-docker_image         = "your-account.dkr.ecr.us-east-1.amazonaws.com/backend:latest"
-```
+## 🛠 Helper Scripts
 
-## 🚀 Deployment
+The `scripts/` directory contains utilities to simplify management.
 
-### Local Deployment
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| `restore-oidc.sh` | **Essential.** Restores GitHub access after a destroy. | `./scripts/restore-oidc.sh` |
+| `nuke-s3.sh` | Force-cleans stubborn S3 buckets (versions). | `./scripts/nuke-s3.sh` |
+| `deploy-infrastructure.sh` | Wrapper for Terraform plan/apply with checks. | `./scripts/deploy-infrastructure.sh dev plan` |
+| `validate-infrastructure.sh` | Runs `terraform validate`, `tflint`, and security scans. | `./scripts/validate-infrastructure.sh` |
+| `health-check.sh` | Verifies endpoints (ALB, DB) are responding. | `./scripts/health-check.sh https://api.example.com` |
+| `rollback.sh` | Reverts Infrastructure or App to previous state. | `./scripts/rollback.sh backend production <ID>` |
+| `final-cleanup.sh` | Deep clean of local logs and temporary files. | `./scripts/final-cleanup.sh` |
 
-```bash
-# Validate
-./scripts/validate-infrastructure.sh
+> **Note:** Always run scripts from the repository root. Ensure they are executable (`chmod +x scripts/*.sh`).
 
-# Plan
-./scripts/deploy-infrastructure.sh dev plan
+---
 
-# Apply
-./scripts/deploy-infrastructure.sh dev apply
+---
 
-# Health check
-./scripts/health-check.sh dev
-```
+## 🛠 Helper Scripts
 
-### GitHub Actions Deployment
+The `scripts/` directory contains utilities to simplify management.
 
-Push to `main` branch triggers:
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| `restore-oidc.sh` | **Essential.** Restores GitHub access after a destroy. | `./scripts/restore-oidc.sh` |
+| `nuke-s3.sh` | Force-cleans stubborn S3 buckets (versions). | `./scripts/nuke-s3.sh` |
+| `deploy-infrastructure.sh` | Wrapper for Terraform plan/apply with checks. | `./scripts/deploy-infrastructure.sh dev plan` |
+| `validate-infrastructure.sh` | Runs `terraform validate`, `tflint`, and security scans. | `./scripts/validate-infrastructure.sh` |
+| `health-check.sh` | Verifies endpoints (ALB, DB) are responding. | `./scripts/health-check.sh https://api.example.com` |
+| `rollback.sh` | Reverts Infrastructure or App to previous state. | `./scripts/rollback.sh backend production <ID>` |
+| `final-cleanup.sh` | Deep clean of local logs and temporary files. | `./scripts/final-cleanup.sh` |
 
-1. `terraform-validate.yml` - Security checks
-2. `terraform-deploy.yml` - Plan and apply
-
-### Multi-Environment
-
-```bash
-./scripts/deploy-infrastructure.sh dev apply
-./scripts/deploy-infrastructure.sh staging apply
-./scripts/deploy-infrastructure.sh prod apply
-```
+> **Note:** Always run scripts from the repository root. Ensure they are executable (`chmod +x scripts/*.sh`).
 
 ## 📊 Monitoring
 
