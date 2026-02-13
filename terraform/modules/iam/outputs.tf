@@ -10,7 +10,7 @@ output "github_backend_role_arn" {
 
 output "github_infra_role_arn" {
   description = "ARN of the GitHub infrastructure deployment role"
-  value       = aws_iam_role.github_infra_role.arn
+  value       = data.aws_iam_role.github_infra_role.arn
 }
 
 output "github_oidc_provider_arn" {

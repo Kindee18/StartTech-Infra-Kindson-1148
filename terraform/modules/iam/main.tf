@@ -138,83 +138,9 @@ resource "aws_iam_role_policy" "github_backend_policy" {
   })
 }
 
-# IAM Role for GitHub Actions CI/CD (Infrastructure Deployment)
-resource "aws_iam_role" "github_infra_role" {
+# IAM Role for GitHub Actions CI/CD (Infrastructure Deployment) - Managed by restore-oidc.sh
+data "aws_iam_role" "github_infra_role" {
   name = "${var.environment}-github-infra-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          Federated = aws_iam_openid_connect_provider.github.arn
-        }
-        Action = "sts:AssumeRoleWithWebIdentity"
-        Condition = {
-          StringEquals = {
-            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          }
-          StringLike = {
-            "token.actions.githubusercontent.com:sub" = "repo:${var.github_repo_owner}/${var.github_repo_infra}:ref:refs/heads/${var.github_branch}"
-          }
-        }
-      }
-    ]
-  })
-
-  tags = var.common_tags
-}
-
-# IAM Policy for Infrastructure Deployment (Terraform)
-resource "aws_iam_role_policy" "github_infra_policy" {
-  name = "${var.environment}-github-infra-policy"
-  role = aws_iam_role.github_infra_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:DeleteObject",
-          "s3:ListBucket"
-        ]
-        Resource = [
-          "arn:aws:s3:::${var.terraform_state_bucket}",
-          "arn:aws:s3:::${var.terraform_state_bucket}/*"
-        ]
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "dynamodb:DescribeTable",
-          "dynamodb:GetItem",
-          "dynamodb:PutItem",
-          "dynamodb:DeleteItem"
-        ]
-        Resource = "arn:aws:dynamodb:${var.aws_region}:${var.aws_account_id}:table/${var.terraform_locks_table}"
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "ec2:*",
-          "elasticache:*",
-          "elasticloadbalancing:*",
-          "s3:*",
-          "cloudfront:*",
-          "logs:*",
-          "cloudwatch:*",
-          "sns:*",
-          "iam:*",
-          "ecr:*"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
 }
 
 # IAM User for local development (if needed)
